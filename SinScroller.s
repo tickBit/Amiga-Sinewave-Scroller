@@ -194,7 +194,7 @@ _start
                                        ; not used, otherwise one gets "phantom graphics flickering
                                        ; on the screen"...
 
-        fmove.x  #0,fp7                ; PI
+        fmove.x  #0,fp7                ;
         fmove.x  #0.004363*320.0,fp1   ; Approximation in radians of PI / 4
                                         
         fdiv.x  #360.0,fp1
