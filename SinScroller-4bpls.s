@@ -723,7 +723,7 @@ low4:   dc.w    $0000
         dc.w    $ffff,$fffe
 
 spaceg  ds.b    (32/8)*32
-clears  ds.b    8               ; for clearing the screen with 68040's move16
+clears  ds.b    64               ; for clearing the screen with 68040's move16
         even
 
 Font    incbin  "gfx/gradbubble-32x32-wip-4bpls.raw"
