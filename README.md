@@ -6,7 +6,7 @@ The code could be optimized a lot.
 
 Anyway, in the hidden CHIP mem area there's a blitter scroll, from where the sinewave effect is made with the 68040's CPU and its FPU.
 
-For clearing the screen the code uses 68040's move16 instruction.
+For clearing the screen the code uses 68040's move16 instruction. NOTICE! move16 instruction is not safe for the chip ram, I should use for example movem and/or move to clear the screen with 68040 CPU. Should update the code soon..
 
 I noticed something I've forgotten: So that one doesn't get any "phantom graphics flickering" on the screen, the sprites must be explicitly set off (DMACON), if they're not used.
 
