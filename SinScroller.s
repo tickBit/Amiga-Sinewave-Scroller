@@ -3,8 +3,7 @@
 
 ; The code isn't state of the art assembly, but hopefully easier to understand...
 
-; You need 68040 Amiga system for this, the code uses 68040's move16 instruction
-; for clearing the screen.
+; You'll need fast CPU for this, I use 68040, because the screen is cleared with CPU
 
 ; If you use Amiga emulation, please use 68040 system and see the magic! :-)
 
@@ -243,14 +242,33 @@ Exit:
         rts
 
 ClearScreen:
-        move.l DrawScreen,a0
-        move.l #clears,a1
-        move.l #640-1,d7
 
-clear
-        move16 (a1)+,(a0)+
-        sub.l  #16,a1
-        dbf    d7,clear
+;; Clear screen with 68040's move16 instruction. It's not safe in the chip ram
+;        move.l DrawScreen,a0
+;        move.l #clears,a1
+;        move.l #640-1,d7
+;
+;clear
+;        move16 (a1)+,(a0)+
+;        sub.l  #16,a1
+;        dbf    d7,clear
+
+; Here the screen is cleared with movem instead of move16.
+; Could be optimized for better performance, perhaps later...
+
+        move.l  DrawScreen,a0
+        moveq   #0,d0
+        moveq   #0,d1
+        moveq   #0,d2
+        moveq   #0,d3
+        moveq   #0,d4
+        moveq   #0,d5
+        moveq   #0,d6
+        move.l  #365-1,d7
+clear   movem.l d0-d6,(a0)
+        add.l   #28,a0
+        dbf     d7,clear
+        movem.l d0-d4,(a0)      ; 20 bytes left to clean
         rts
 
 drawLetter
@@ -516,9 +534,9 @@ low1:   dc.w    $0000
         dc.w    $ffff,$fffe
 
 spaceg  ds.b    (32/8)*32
-clears  ds.b    64               ; for clearing the screen with 68040's move16
+;clears  ds.b    64               ; for clearing the screen with 68040's move16
         even
-        ; change this to where you have the font
-Font    incbin  "Work:MyProjects/SinScroller/gfx/gradbubble-32x32-wip.raw"
+
+Font    incbin  "gfx/gradbubble-32x32-wip.raw"
 
         end

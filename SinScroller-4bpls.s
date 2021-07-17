@@ -5,8 +5,7 @@
 ;
 ; The code isn't state of the art assembly, but hopefully easier to understand...
 ;
-; You need 68040 Amiga system for this, the code uses 68040's move16 instruction
-; for clearing the screen.
+; You'll need fast CPU for this, I use 68040, because the screen is cleared with CPU
 ;
 ; If you use Amiga emulation, please use 68040 system and see the magic! :-)
 ;
@@ -250,41 +249,53 @@ Exit:
         rts
 
 ClearScreen:
+; See the 1 bpl version, if you would like to see how I used to clear the screen with a
+; 68040's move16 instuction. It's in the comments.
+
         move.l DrawScreen,a0
-        move.l #clears,a1
-        move.l #640-1,d7
+        move.l #365-1,d7
 
 ; clear all 4 bitplanes
 
-clear1
-        move16 (a1)+,(a0)+
-        sub.l  #16,a1
-        dbf    d7,clear1
+        moveq   #0,d0
+        moveq   #0,d1
+        moveq   #0,d2
+        moveq   #0,d3
+        moveq   #0,d4
+        moveq   #0,d5
+        moveq   #0,d6
+        move.l  #365-1,d7
+clear1  movem.l d0-d6,(a0)
+        add.l   #28,a0
+        dbf     d7,clear1
+        movem.l d0-d4,(a0)      ; 20 bytes left to clean
 
-        move.l DrawScreen,a0
-        add.l  #10240,a0
-        move.l #640-1,d7
-clear2
-        move16 (a1)+,(a0)+
-        sub.l  #16,a1
-        dbf    d7,clear2
+        move.l  DrawScreen,a0
+        add.l   #10240,a0
 
-        move.l DrawScreen,a0
-        add.l  #10240*2,a0
-        move.l #640-1,d7
-clear3
-        move16 (a1)+,(a0)+
-        sub.l  #16,a1
-        dbf    d7,clear3
+        move.l  #365-1,d7
+clear2  movem.l d0-d6,(a0)
+        add.l   #28,a0
+        dbf     d7,clear2
+        movem.l d0-d4,(a0)      ; 20 bytes left to clean   
 
-        move.l DrawScreen,a0
-        add.l  #10240*3,a0
-        move.l #640-1,d7
-clear4
-        move16 (a1)+,(a0)+
-        sub.l  #16,a1
-        dbf    d7,clear4
+        move.l  DrawScreen,a0
+        add.l   #10240*2,a0
 
+        move.l  #365-1,d7
+clear3  movem.l d0-d6,(a0)
+        add.l   #28,a0
+        dbf     d7,clear3
+        movem.l d0-d4,(a0)      ; 20 bytes left to clean
+
+        move.l  DrawScreen,a0
+        add.l   #10240*3,a0
+
+        move.l  #365-1,d7
+clear4  movem.l d0-d6,(a0)
+        add.l   #28,a0
+        dbf     d7,clear4
+        movem.l d0-d4,(a0)      ; 20 bytes left to clean
         rts
 
 drawLetter
